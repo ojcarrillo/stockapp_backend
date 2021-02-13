@@ -1,5 +1,7 @@
 package com.stockapp.stockapp.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,19 +13,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.stockapp.stockapp.model.Permisos;
 import com.stockapp.stockapp.model.Usuario;
+import com.stockapp.stockapp.repository.PermisosRepository;
 import com.stockapp.stockapp.repository.UsuarioRestRepository;
 import com.stockapp.stockapp.util.JwtUtil;
+import com.stockapp.stockapp.util.LoginResponse;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 public class LoginController {
 
 	@Autowired
+	JwtUtil jwtService;
+
+	@Autowired
 	UsuarioRestRepository usuarioService;
 
 	@Autowired
-	JwtUtil jwtService;
+	PermisosRepository permisosService;
 	
 	private final String PREFIX = "Bearer ";
 
@@ -34,16 +42,22 @@ public class LoginController {
 		if (Objects.nonNull(busqueda) && Objects.nonNull(busqueda.getId()) && busqueda.getActivo()) {
 			String token = jwtService.getJWTToken(busqueda.getLogin());
 			LoginResponse response = new LoginResponse(busqueda, token);
+			response.setMenu(armarEstructuraMenu(busqueda));
 			return ResponseEntity.ok(response);
 		}
 		return ResponseEntity.notFound().build();
 	}
 
-	/*
-	 * @GetMapping(path = "/validarLogin") public ResponseEntity
-	 * validarLogin(@RequestHeader("x-token") String token) {
-	 * System.out.println(token); return ResponseEntity.ok(token); }
-	 */
+	private HashMap<String, ArrayList<Permisos>> armarEstructuraMenu(Usuario busqueda) {
+		HashMap<String, ArrayList<Permisos>> hashMenu = new HashMap<String, ArrayList<Permisos>>();
+		for (Permisos obj : permisosService.findByIdUsuario(busqueda.getId())) {
+			if(!hashMenu.containsKey(obj.getMenu())) {
+				hashMenu.put(obj.getMenu(), new ArrayList<Permisos>());					
+			}
+			hashMenu.get(obj.getMenu()).add(obj);
+		}
+		return hashMenu;
+	}
 
 	@GetMapping(path = "/validarToken")
 	public ResponseEntity validarToken(@RequestHeader("Authorization") String token) {
@@ -54,35 +68,3 @@ public class LoginController {
 	}
 }
 
-class LoginResponse {
-
-	private Usuario usuario;
-	private String token;
-
-	public LoginResponse() {
-		super();
-	}
-
-	public LoginResponse(Usuario usuario, String token) {
-		super();
-		this.usuario = usuario;
-		this.token = token;
-	}
-
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public String getToken() {
-		return token;
-	}
-
-	public void setToken(String token) {
-		this.token = token;
-	}
-
-}
