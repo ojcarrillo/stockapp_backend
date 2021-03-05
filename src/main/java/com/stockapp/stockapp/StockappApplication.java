@@ -14,12 +14,13 @@ public class StockappApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(StockappApplication.class, args);
 	}
-	
+
 	@Bean
-    public RepositoryRestConfigurer repositoryRestConfigurer(EntityManager entityManager) {
-        return RepositoryRestConfigurer.withConfig(config -> {
-            config.exposeIdsFor(entityManager.getMetamodel().getEntities()
-                    .stream().map(Type::getJavaType).toArray(Class[]::new));
-        });
-    }
+	public RepositoryRestConfigurer repositoryRestConfigurer(EntityManager entityManager) {
+		return RepositoryRestConfigurer.withConfig(config -> {
+			config.exposeIdsFor(
+					entityManager.getMetamodel().getEntities().stream().map(Type::getJavaType).toArray(Class[]::new));
+		});
+	}
+
 }

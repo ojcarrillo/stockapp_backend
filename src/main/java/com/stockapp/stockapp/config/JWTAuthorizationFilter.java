@@ -36,7 +36,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials");
         response.addHeader("Access-Control-Allow-Credentials", "true");
         response.addIntHeader("Access-Control-Max-Age", 3600);
-	        
+        /*if ("POST".equalsIgnoreCase(request.getMethod())) 
+        {
+           String test = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+           logger.info(test);
+        }*/
 		try {
 			if (checkJWTToken(request, response)) {
 				Claims claims = validateToken(request);
@@ -54,6 +58,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
 			((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 			return;
 		}
+		//return;
 	}	
 
 	private Claims validateToken(HttpServletRequest request) {

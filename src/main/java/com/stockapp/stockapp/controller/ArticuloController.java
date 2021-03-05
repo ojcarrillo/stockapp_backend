@@ -1,6 +1,5 @@
 package com.stockapp.stockapp.controller;
 
-import java.io.IOException;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stockapp.stockapp.model.Articulo;
 import com.stockapp.stockapp.repository.ArticuloRestRepository;
+import com.stockapp.stockapp.util.Utils;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -23,7 +22,7 @@ public class ArticuloController {
 
 	@PostMapping(path = "/guardarArticulo", consumes = "application/json", produces = "application/json")
 	public ResponseEntity guardarArticulo(@RequestBody Articulo articulo) {
-		validarJson(articulo);
+		Utils.validarJson(articulo);
 		
 		if(Objects.nonNull(articulo)) {
 			Articulo objGuardado = articuloService.save(articulo);
@@ -34,25 +33,6 @@ public class ArticuloController {
 		}
 		
 		return ResponseEntity.notFound().build();
-	}
-	
-	
-
-	private void validarJson(Articulo articulo) {
-		ObjectMapper Obj = new ObjectMapper();
-
-		try {
-
-			// get Oraganisation object as a json string
-			String jsonStr = Obj.writeValueAsString(articulo);
-
-			// Displaying JSON String
-			System.out.println(jsonStr);
-		}
-
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
