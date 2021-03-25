@@ -49,9 +49,12 @@ public class VentaFactura {
 	@Column(name = "desctotfactura", precision = 10, scale = 2)
 	private Double descuentoFactura;
 
-	@Column(name = "fechahoraventa")
+	@Column(name = "fechahoraventa", insertable = false, updatable = false)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date fechaVenta;
+	
+	@Column(name = "idvendedor")
+	private Integer idUsuario;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "factura", orphanRemoval = true)
 	@JsonManagedReference(value = "articulos")
@@ -60,13 +63,13 @@ public class VentaFactura {
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "facturaPago", orphanRemoval = true)
 	@JsonManagedReference(value = "pago")
 	private PagoFactura pago;
-
+	
 	public VentaFactura() {
 		super();
 	}
 
 	public VentaFactura(Integer id, String comprador, String documentoComprador, String numeroFactura, Double valorIva,
-			Double valorFactura, Double exentoFactura, Double baseFactura, Double descuentoFactura, Date fechaVenta,
+			Double valorFactura, Double exentoFactura, Double baseFactura, Double descuentoFactura, Date fechaVenta, Integer idUsuario,
 			List<DetalleVentaFactura> articulos, PagoFactura pago) {
 		super();
 		this.id = id;
@@ -79,6 +82,7 @@ public class VentaFactura {
 		this.baseFactura = baseFactura;
 		this.descuentoFactura = descuentoFactura;
 		this.fechaVenta = fechaVenta;
+		this.idUsuario = idUsuario;
 		this.articulos = articulos;
 		this.pago = pago;
 	}
@@ -161,6 +165,14 @@ public class VentaFactura {
 
 	public void setFechaVenta(Date fechaVenta) {
 		this.fechaVenta = fechaVenta;
+	}
+
+	public Integer getIdUsuario() {
+		return idUsuario;
+	}
+
+	public void setIdUsuario(Integer idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
 	public List<DetalleVentaFactura> getArticulos() {

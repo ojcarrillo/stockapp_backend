@@ -19,9 +19,15 @@ public interface ArticuloRestRepository extends PagingAndSortingRepository<Artic
 	Articulo save(Articulo articulo);
 	
 	@RestResource(path = "filtrarArticulos", rel="articulos")
-	@Query(value="SELECT * FROM articulos where lower(nombregenerico) like concat_ws('','%',:filtro,'%') or lower(nombrecomercial) like concat_ws('','%',:filtro,'%') ", nativeQuery = true)
-	public Page<Articulo> findByNombreArticulo(@Param("filtro") String filtro, Pageable pageable);
+	@Query(value="SELECT * FROM articulos where lower(nombregenerico) like concat_ws('','%',:filtro,'%') "
+			+" or lower(nombrecomercial) like concat_ws('','%',:filtro,'%') "
+			+" and case when 1 = ifnull(:existenciasBajas, 0) then Existencias <= ExistenciasMinimas end", nativeQuery = true)
+	public Page<Articulo> findByNombreArticulo(@Param("filtro") String filtro, @Param("existenciasBajas") Integer existenciasBajas, Pageable pageable);
 	
+	@RestResource(path = "articulos", rel="articulos")
+	@Query(value="SELECT * FROM articulos where 1 = 1 "
+			+" and case when 1 = ifnull(:existenciasBajas, 0) then Existencias <= ExistenciasMinimas end", nativeQuery = true)
+	public Page<Articulo> articulos(@Param("existenciasBajas") Integer existenciasBajas, Pageable pageable);
 	
 	@RestResource(path = "findById", rel="articulos")
 	@Query(value="SELECT * FROM articulos where idarticulos = :id", nativeQuery = true)

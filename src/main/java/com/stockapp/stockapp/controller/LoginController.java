@@ -19,6 +19,7 @@ import com.stockapp.stockapp.repository.PermisosRepository;
 import com.stockapp.stockapp.repository.UsuarioRestRepository;
 import com.stockapp.stockapp.util.JwtUtil;
 import com.stockapp.stockapp.util.LoginResponse;
+import com.stockapp.stockapp.util.Utils;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -33,14 +34,12 @@ public class LoginController {
 	@Autowired
 	PermisosRepository permisosService;
 	
-	private final String PREFIX = "Bearer ";
-
 	@PostMapping(path = "/login", consumes = "application/json", produces = "application/json")
 	public ResponseEntity login(@RequestBody Usuario usuarioBusqueda) {
 		Usuario busqueda = usuarioService.findByLoginAndPassword(usuarioBusqueda.getLogin(),
 				usuarioBusqueda.getPassword());
 		if (Objects.nonNull(busqueda) && Objects.nonNull(busqueda.getId()) && busqueda.getActivo()) {
-			String token = jwtService.getJWTToken(busqueda.getLogin());
+			String token = jwtService.getJWTToken(busqueda.getLogin(), busqueda.getId());
 			LoginResponse response = new LoginResponse(busqueda, token);
 			response.setMenu(armarEstructuraMenu(busqueda));
 			return ResponseEntity.ok(response);
@@ -61,8 +60,9 @@ public class LoginController {
 
 	@GetMapping(path = "/validarToken")
 	public ResponseEntity validarToken(@RequestHeader("Authorization") String token) {
-		String login = jwtService.getUsernameFromToken(token.replace(PREFIX, ""));
-		String newToken = jwtService.getJWTToken(login);
+		String login = jwtService.getUsernameFromToken(token.replace(Utils.PREFIX, ""));
+		Integer userId = jwtService.getUserIdFromToken(token.replace(Utils.PREFIX, ""));
+		String newToken = jwtService.getJWTToken(login, userId);
 		LoginResponse response = new LoginResponse(null, newToken);
 		return ResponseEntity.ok(response);
 	}

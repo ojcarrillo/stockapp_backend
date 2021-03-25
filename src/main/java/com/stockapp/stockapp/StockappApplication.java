@@ -6,6 +6,7 @@ import javax.persistence.metamodel.Type;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 
 @SpringBootApplication
@@ -21,6 +22,11 @@ public class StockappApplication {
 			config.exposeIdsFor(
 					entityManager.getMetamodel().getEntities().stream().map(Type::getJavaType).toArray(Class[]::new));
 		});
+	}
+
+	@Bean
+	public SpelAwareProxyProjectionFactory projectionFactory() {
+		return new SpelAwareProxyProjectionFactory();
 	}
 
 }

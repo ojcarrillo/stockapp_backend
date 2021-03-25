@@ -1,12 +1,14 @@
 package com.stockapp.stockapp.projections;
 
 import java.util.Date;
-import java.util.List;
 
-import com.stockapp.stockapp.model.DetalleVentaFactura;
+import org.springframework.data.rest.core.config.Projection;
+
 import com.stockapp.stockapp.model.PagoFactura;
+import com.stockapp.stockapp.model.VentaFactura;
 
-public interface VentaFacturaProjection {
+@Projection(name="encabezado", types = { VentaFactura.class}) 
+public interface VentaFacturaEncabezadoProjection {
 
 	public Integer getId();
 	public String getComprador();
@@ -18,7 +20,6 @@ public interface VentaFacturaProjection {
 	public Double getBaseFactura();
 	public Double getDescuentoFactura();
 	public Date getFechaVenta();
-	public List<DetalleVentaFactura> getArticulos();
 	public PagoFactura getPago();
 	
 }
