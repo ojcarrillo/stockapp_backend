@@ -16,6 +16,7 @@ public interface FacturaProveedorProjection {
 	public Date getFechaVencimiento();
 	public String getAnotaciones();
 	public Proveedor getProveedor();
+	public String getEstado();
 	public List<DetalleFacturaProveedor> getArticulos();
 	
 }

@@ -20,7 +20,7 @@ public interface VentaFacturaRestRepository extends PagingAndSortingRepository<V
 	@RestResource(exported = false)
 	VentaFactura save(VentaFactura factura);
 
-	@RestResource(exported = false)
+	@RestResource(path = "findByNumeroFactura", rel = "ventafactura")
 	VentaFactura findByNumeroFactura(String numeroFactura);
 
 	@RestResource(path = "findById", rel = "ventafactura")

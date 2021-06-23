@@ -35,4 +35,7 @@ public interface FacturaProveedorRestRepository extends PagingAndSortingReposito
 	@Query(value="SELECT * FROM facturasproveedor where idproveedores = :idproveedor", nativeQuery = true)
 	public Page<FacturaProveedor> findByIdProveedor(@Param("idproveedor") String idproveedor, Pageable pageable);
 	
+	@RestResource(exported=false)
+	@Query(value="SELECT * FROM facturasproveedor where facturanum = :numeroFactura", nativeQuery = true)
+	public FacturaProveedor findByNumeroFactura(@Param("numeroFactura") String numeroFactura);
 }

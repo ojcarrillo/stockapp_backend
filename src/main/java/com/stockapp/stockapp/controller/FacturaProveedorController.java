@@ -7,13 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stockapp.stockapp.model.Articulo;
 import com.stockapp.stockapp.model.DetalleFacturaProveedor;
 import com.stockapp.stockapp.model.FacturaProveedor;
+import com.stockapp.stockapp.projections.FacturaProveedorProjection;
 import com.stockapp.stockapp.repository.ArticuloRestRepository;
 import com.stockapp.stockapp.repository.FacturaProveedorRestRepository;
 import com.stockapp.stockapp.util.ErrorResponse;
@@ -22,7 +25,7 @@ import com.stockapp.stockapp.util.Utils;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-public class FacturaProveedorController {
+public class FacturaProveedorController extends MasterController{
 
 	@Autowired
 	private FacturaProveedorRestRepository facturaProveedorService;
@@ -76,4 +79,9 @@ public class FacturaProveedorController {
 		return objfinal;
 	}
 
+	@GetMapping(path = "/facturas/search/findByNumeroFactura", consumes = "application/json", produces = "application/json")
+	public FacturaProveedorProjection findByNumeroFactura(@RequestParam("numeroFactura") String numeroFactura) {
+		FacturaProveedor result = facturaProveedorService.findByNumeroFactura(numeroFactura);
+		return projectionFactory.createProjection(FacturaProveedorProjection.class, result);
+	}
 }
